@@ -49,7 +49,7 @@ CREATE TABLE IF NOT EXISTS `flutter_160420136`.`jadwals` (
   `alamat` VARCHAR(500) NULL,
   `dolanans_id` INT NOT NULL,
   PRIMARY KEY (`id`),
-  INDEX `fk_jadwals_dolanans1_idx` (`dolanans_id` ASC) VISIBLE,
+  INDEX `fk_jadwals_dolanans1_idx` (`dolanans_id` ASC) ,
   CONSTRAINT `fk_jadwals_dolanans1`
     FOREIGN KEY (`dolanans_id`)
     REFERENCES `flutter_160420136`.`dolanans` (`id`)
@@ -66,8 +66,8 @@ CREATE TABLE IF NOT EXISTS `flutter_160420136`.`list_jadwals` (
   `pengguna` INT NOT NULL,
   `jadwal` INT NOT NULL,
   PRIMARY KEY (`id`),
-  INDEX `fk_users_has_schedules_schedules1_idx` (`jadwal` ASC) VISIBLE,
-  INDEX `fk_users_has_schedules_users_idx` (`pengguna` ASC) VISIBLE,
+  INDEX `fk_users_has_schedules_schedules1_idx` (`jadwal` ASC) ,
+  INDEX `fk_users_has_schedules_users_idx` (`pengguna` ASC) ,
   CONSTRAINT `fk_users_has_schedules_users`
     FOREIGN KEY (`pengguna`)
     REFERENCES `flutter_160420136`.`penggunas` (`id`)
@@ -89,7 +89,7 @@ CREATE TABLE IF NOT EXISTS `flutter_160420136`.`ngobrols` (
   `isi` LONGTEXT NULL,
   `list_jadwal` INT NOT NULL,
   PRIMARY KEY (`id`),
-  INDEX `fk_chats_users_has_schedules1_idx` (`list_jadwal` ASC) VISIBLE,
+  INDEX `fk_chats_users_has_schedules1_idx` (`list_jadwal` ASC) ,
   CONSTRAINT `fk_chats_users_has_schedules1`
     FOREIGN KEY (`list_jadwal`)
     REFERENCES `flutter_160420136`.`list_jadwals` (`id`)
