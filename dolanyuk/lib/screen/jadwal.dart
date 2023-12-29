@@ -2,14 +2,14 @@
 
 import 'package:flutter/material.dart';
 
-class jadwal extends StatefulWidget {
-  const jadwal({super.key});
+class Jadwal extends StatefulWidget {
+  const Jadwal({super.key});
 
   @override
-  State<jadwal> createState() => _jadwalState();
+  State<Jadwal> createState() => _JadwalState();
 }
 
-class _jadwalState extends State<jadwal> {
+class _JadwalState extends State<Jadwal> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(

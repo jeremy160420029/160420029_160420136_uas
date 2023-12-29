@@ -17,10 +17,9 @@ Pengguna? pengguna_aktif = null;
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   cekPengguna().then((String result) {
-    if(result == '') {
+    if (result == '') {
       runApp(const mySignIn());
-    }
-    else {
+    } else {
       pengguna_aktif = Pengguna.fromJson(jsonDecode(result));
       runApp(const MyApp());
     }
@@ -29,8 +28,8 @@ void main() {
 
 Future<String> cekPengguna() async {
   final prefs = await SharedPreferences.getInstance();
-    String json_pengguna_aktif = prefs.getString("pengguna_aktif") ?? '';
-    return json_pengguna_aktif;
+  String json_pengguna_aktif = prefs.getString("pengguna_aktif") ?? '';
+  return json_pengguna_aktif;
 }
 
 void logout() async {
@@ -48,11 +47,11 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'DolanYuk',
       routes: {
-        'jadwal':(context) => jadwal(),
-        'cari':(context) => cari(),
-        'profil':(context) => profil(),
-        'ngobrol':(context) => ngobrol(),
-        'buat':(context) => buat(),
+        'jadwal': (context) => Jadwal(),
+        'cari': (context) => cari(),
+        'profil': (context) => Profil(),
+        'ngobrol': (context) => ngobrol(),
+        'buat': (context) => buat(),
       },
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
@@ -74,37 +73,37 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   int _currentIndex = 0;
-  final List<Widget> _screens = [jadwal(), cari(), profil()];
+  final List<Widget> _screens = [Jadwal(), cari(), Profil()];
   final List<String> _title = ['Jadwal', 'Cari', 'Profil'];
-  
+
   // Bottom Menu
   BottomNavigationBar myBottomNavigationBar() {
     return BottomNavigationBar(
-        currentIndex: _currentIndex,
-        fixedColor: Colors.deepPurpleAccent,
-        items: [
-          BottomNavigationBarItem(
-            label: "Jadwal",
-            icon: Icon(Icons.calendar_month),
-          ),
-          BottomNavigationBarItem(
-            label: "Cari",
-            icon: Icon(Icons.search),
-          ),
-          BottomNavigationBarItem(
-            label: "Profil",
-            icon: Icon(Icons.person)
-          ),
-        ],
-        onTap: (int index) {
-          setState(() {
-            _currentIndex = index;
-          });
+      currentIndex: _currentIndex,
+      fixedColor: Colors.deepPurpleAccent,
+      onTap: (int index) {
+        setState(() {
+          _currentIndex = index;
         });
+      },
+      items: [
+        BottomNavigationBarItem(
+          label: "Jadwal",
+          icon: Icon(Icons.calendar_month),
+        ),
+        BottomNavigationBarItem(
+          label: "Cari",
+          icon: Icon(Icons.search),
+        ),
+        BottomNavigationBarItem(label: "Profil", icon: Icon(Icons.person)),
+      ],
+    );
   }
 
   // Drawer
   Drawer myDrawer() {
+    main();
+
     return Drawer(
       elevation: 16.0,
       child: Column(
@@ -113,46 +112,44 @@ class _MyHomePageState extends State<MyHomePage> {
               accountName: Text(pengguna_aktif!.nama_lengkap),
               accountEmail: Text(pengguna_aktif!.email),
               currentAccountPicture: CircleAvatar(
-                backgroundImage:NetworkImage(pengguna_aktif!.gambar ?? "https://chi-care.org/newdesign/wp-content/uploads/2023/05/Dummy-Person.png"))),
-                
+                  backgroundImage: NetworkImage(pengguna_aktif!.gambar ??
+                      "https://chi-care.org/newdesign/wp-content/uploads/2023/05/Dummy-Person.png"))),
           ListTile(
-            title: new Text("Buat Jadwal"),
-            leading: new Icon(Icons.edit),
-            onTap: () {
-              Navigator.pushNamed(context, 'buat');
+              title: new Text("Buat Jadwal"),
+              leading: new Icon(Icons.edit),
+              onTap: () {
+                Navigator.pushNamed(context, 'buat');
               }),
           ListTile(
-            title: new Text("Jadwal"),
-            leading: new Icon(Icons.calendar_month),
-             onTap: () {
-              Navigator.pushNamed(context, 'jadwal');
-            }
-          ),
-          ListTile(
-            title: new Text("Cari"),
-            leading: new Icon(Icons.search),
-            onTap: () {
-              Navigator.pushNamed(context, 'cari');
-            }
-          ),
-          ListTile(
-            title: new Text("Profil"),
-            leading: new Icon(Icons.person),
-            onTap: () {
-              Navigator.pushNamed(context, 'profil');
+              title: new Text("Jadwal"),
+              leading: new Icon(Icons.calendar_month),
+              onTap: () {
+                Navigator.pushNamed(context, 'jadwal');
               }),
           ListTile(
-            title: new Text("Party Chat"),
-            leading: new Icon(Icons.chat),
-            onTap: () {
-              Navigator.pushNamed(context, 'ngobrol');
+              title: new Text("Cari"),
+              leading: new Icon(Icons.search),
+              onTap: () {
+                Navigator.pushNamed(context, 'cari');
               }),
           ListTile(
-            title: new Text("Logout", style: TextStyle(color: Colors.red)),
-            leading: new Icon(Icons.exit_to_app, color: Colors.red),
-            onTap: () {
-              logout();
-            }),
+              title: new Text("Profil"),
+              leading: new Icon(Icons.person),
+              onTap: () {
+                Navigator.pushNamed(context, 'profil');
+              }),
+          ListTile(
+              title: new Text("Party Chat"),
+              leading: new Icon(Icons.chat),
+              onTap: () {
+                Navigator.pushNamed(context, 'ngobrol');
+              }),
+          ListTile(
+              title: new Text("Logout", style: TextStyle(color: Colors.red)),
+              leading: new Icon(Icons.exit_to_app, color: Colors.red),
+              onTap: () {
+                logout();
+              }),
         ],
       ),
     );
@@ -167,7 +164,7 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       drawer: myDrawer(),
       body: _screens[_currentIndex],
-      bottomNavigationBar: myBottomNavigationBar(), 
+      bottomNavigationBar: myBottomNavigationBar(),
     );
   }
 }
