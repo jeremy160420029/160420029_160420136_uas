@@ -2,13 +2,13 @@
 
 import 'dart:convert';
 
-import 'package:dolanyuk/class/pengguna.dart';
+import 'package:dolanyuk/class/penggunas.dart';
 import 'package:dolanyuk/screen/profil.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 
-Pengguna? pengguna_aktif = null;
+Penggunas? pengguna_aktif = null;
 
 class UpdateProfil extends StatefulWidget {
   const UpdateProfil({Key? key}) : super(key: key);
@@ -59,7 +59,7 @@ class _UpdateProfilState extends State<UpdateProfil> {
   Future<void> updateSharedPreferences() async {
     final prefs = await SharedPreferences.getInstance();
     String jsonPenggunaAktif = prefs.getString("pengguna_aktif") ?? '';
-    Pengguna existingUser = Pengguna.fromJson(jsonDecode(jsonPenggunaAktif));
+    Penggunas existingUser = Penggunas.fromJson(jsonDecode(jsonPenggunaAktif));
 
     existingUser.nama_lengkap = _nama_lengkap;
     existingUser.gambar = _photo_url;
@@ -92,7 +92,7 @@ class _UpdateProfilState extends State<UpdateProfil> {
               return Text('Error: ${snapshot.error}');
             } else {
               String result = snapshot.data as String;
-              pengguna_aktif = Pengguna.fromJson(jsonDecode(result));
+              pengguna_aktif = Penggunas.fromJson(jsonDecode(result));
 
               return Padding(
                 padding: const EdgeInsets.all(16.0),

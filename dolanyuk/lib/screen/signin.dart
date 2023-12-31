@@ -1,6 +1,6 @@
 // ignore_for_file: prefer_const_constructors, depend_on_referenced_packages, unused_import, camel_case_types, unused_field, prefer_final_fields, avoid_print, unnecessary_const, avoid_unnecessary_containers, non_constant_identifier_names, unused_local_variable, use_build_context_synchronously
 
-import 'package:dolanyuk/class/pengguna.dart';
+import 'package:dolanyuk/class/penggunas.dart';
 import 'package:dolanyuk/main.dart';
 import 'package:dolanyuk/screen/profil.dart';
 import 'package:dolanyuk/screen/signup.dart';

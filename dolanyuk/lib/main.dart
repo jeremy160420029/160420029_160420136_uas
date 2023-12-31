@@ -2,7 +2,7 @@
 
 import 'dart:convert';
 
-import 'package:dolanyuk/class/pengguna.dart';
+import 'package:dolanyuk/class/penggunas.dart';
 import 'package:dolanyuk/screen/buat.dart';
 import 'package:dolanyuk/screen/cari.dart';
 import 'package:dolanyuk/screen/jadwal.dart';
@@ -12,7 +12,7 @@ import 'package:dolanyuk/screen/signin.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-Pengguna? pengguna_aktif = null;
+Penggunas? pengguna_aktif = null;
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -20,7 +20,7 @@ void main() {
     if (result == '') {
       runApp(const mySignIn());
     } else {
-      pengguna_aktif = Pengguna.fromJson(jsonDecode(result));
+      pengguna_aktif = Penggunas.fromJson(jsonDecode(result));
       runApp(const MyApp());
     }
   });
@@ -48,7 +48,7 @@ class MyApp extends StatelessWidget {
       title: 'DolanYuk',
       routes: {
         'jadwal': (context) => Jadwal(),
-        'cari': (context) => cari(),
+        'cari': (context) => Cari(),
         'profil': (context) => Profil(),
         'ngobrol': (context) => ngobrol(),
         'buat': (context) => buat(),
@@ -73,7 +73,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   int _currentIndex = 0;
-  final List<Widget> _screens = [Jadwal(), cari(), Profil()];
+  final List<Widget> _screens = [Jadwal(), Cari(), Profil()];
   final List<String> _title = ['Jadwal', 'Cari', 'Profil'];
 
   // Bottom Menu

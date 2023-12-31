@@ -2,14 +2,14 @@
 
 import 'dart:convert';
 
-import 'package:dolanyuk/class/pengguna.dart';
+import 'package:dolanyuk/class/penggunas.dart';
 import 'package:dolanyuk/main.dart';
 import 'package:dolanyuk/screen/update_password.dart';
 import 'package:dolanyuk/screen/update_profile.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-Pengguna? pengguna_aktif = null;
+Penggunas? pengguna_aktif = null;
 
 class Profil extends StatefulWidget {
   const Profil({Key? key}) : super(key: key);
@@ -46,7 +46,7 @@ class _ProfilState extends State<Profil> {
               return Text('Error: ${snapshot.error}');
             } else {
               String result = snapshot.data as String;
-              pengguna_aktif = Pengguna.fromJson(jsonDecode(result));
+              pengguna_aktif = Penggunas.fromJson(jsonDecode(result));
 
               return Column(
                 mainAxisAlignment: MainAxisAlignment.center,
