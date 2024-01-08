@@ -1,14 +1,15 @@
-// ignore_for_file: non_constant_identifier_names
+// ignore_for_file: non_constant_identifier_names, unnecessary_cast
 
-List<Jadwals> Js = [];
+import 'dolanans.dart';
 
 class Jadwals {
   int id;
-  DateTime tanggal;
-  DateTime jam;
+  String tanggal;
+  String jam;
   String lokasi;
   String alamat;
-  int dolan_id;
+  int current_member;
+  Dolanans object_dolanan;
 
   Jadwals(
       {required this.id,
@@ -16,27 +17,30 @@ class Jadwals {
       required this.jam,
       required this.lokasi,
       required this.alamat,
-      required this.dolan_id});
+      required this.current_member,
+      required this.object_dolanan});
 
   factory Jadwals.fromJson(Map<String, dynamic> json) {
     return Jadwals(
-      id: json['id'] as int,
-      tanggal: json['tanggal'] as DateTime,
-      jam: json['jam'] as DateTime,
+      id: json['jadwal'] as int,
+      tanggal: json['tanggal'] as String,
+      jam: json['jam'] as String,
       lokasi: json['lokasi'] as String,
       alamat: json['alamat'] as String,
-      dolan_id: json['dolan_id'] as int,
+      current_member: json['current_member'] as int,
+      object_dolanan: Dolanans.fromJson(json['object_dolanan']) as Dolanans,
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
-      'id': id,
+      'jadwal': id,
       'tanggal': tanggal,
       'jam': jam,
       'lokasi': lokasi,
       'alamat': alamat,
-      'dolan_id': dolan_id,
+      'current_member': current_member,
+      'object_dolanan': object_dolanan.toJson(),
     };
   }
 }

@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors
+// ignore_for_file: prefer_const_constructors, unused_field, depend_on_referenced_packages, prefer_const_literals_to_create_immutables
 
 import 'dart:convert';
 
@@ -16,6 +16,7 @@ class Cari extends StatefulWidget {
 class _CariState extends State<Cari> {
   String _temp = 'waiting API respond…';
   String _txtCari = '';
+  List<Jadwals> Js = [];
 
   Future<String> fetchData() async {
     final response = await http.post(

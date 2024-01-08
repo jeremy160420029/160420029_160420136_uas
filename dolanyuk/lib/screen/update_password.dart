@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors
+// ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors, unused_field, unnecessary_new, unused_import, depend_on_referenced_packages, non_constant_identifier_names, avoid_init_to_null
 
 import 'dart:convert';
 
