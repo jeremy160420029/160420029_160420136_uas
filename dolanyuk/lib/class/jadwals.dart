@@ -22,7 +22,7 @@ class Jadwals {
 
   factory Jadwals.fromJson(Map<String, dynamic> json) {
     return Jadwals(
-      id: json['jadwal'] as int? ?? 0,
+      id: json['id'] as int? ?? 0,
       tanggal: json['tanggal'] as String? ?? '',
       jam: json['jam'] as String? ?? '',
       lokasi: json['lokasi'] as String? ?? '',

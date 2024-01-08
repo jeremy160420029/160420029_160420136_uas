@@ -1,9 +1,13 @@
 import 'dart:convert';
 
 import 'package:dolanyuk/class/list_jadwals.dart';
+import 'package:dolanyuk/class/penggunas.dart';
 import 'package:dolanyuk/screen/ngobrol.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
+
+Penggunas? pengguna_aktif = null;
 
 class Ruangan extends StatefulWidget {
   int jadwalID;
@@ -16,17 +20,6 @@ class Ruangan extends StatefulWidget {
 
 class _RuanganState extends State<Ruangan> {
   String _temp = 'waiting API respond…';
-
-  // Future<String> fetchData() async {
-  //   final response = await http.post(
-  //       Uri.parse("https://ubaya.me/flutter/160420136/dolanyuk/ruangan.php"),
-  //       body: {'id': widget.jadwalID.toString()});
-  //   if (response.statusCode == 200) {
-  //     return response.body;
-  //   } else {
-  //     throw Exception('Failed to read API');
-  //   }
-  // }
   Future<List<ListJadwals>> fetchData() async {
     final response = await http.post(
       Uri.parse("https://ubaya.me/flutter/160420136/dolanyuk/ruangan.php"),
@@ -43,6 +36,12 @@ class _RuanganState extends State<Ruangan> {
     }
   }
 
+  Future<String> cekPengguna() async {
+    final prefs = await SharedPreferences.getInstance();
+    String json_pengguna_aktif = prefs.getString("pengguna_aktif") ?? '';
+    return json_pengguna_aktif;
+  }
+
   bacaData() {
     LJs.clear();
     Future<List<ListJadwals>> data = fetchData(); // Update the type
@@ -53,7 +52,7 @@ class _RuanganState extends State<Ruangan> {
       }
       setState(() {
         _temp = LJs.isNotEmpty
-            ? LJs[0].nama_lengkap
+            ? LJs[0].object_pengguna.nama_lengkap
             : 'No data'; // Update indexing logic
       });
     });
@@ -95,6 +94,9 @@ class _RuanganState extends State<Ruangan> {
       return const CircularProgressIndicator();
     }
 
+    bool isCurrentUserInList = LJs.any((jadwal) =>
+        jadwal.object_pengguna.nama_lengkap == pengguna_aktif?.nama_lengkap);
+
     return Column(
       children: <Widget>[
         Expanded(
@@ -107,11 +109,12 @@ class _RuanganState extends State<Ruangan> {
                   children: <Widget>[
                     ListTile(
                       leading: CircleAvatar(
-                        backgroundImage: NetworkImage(LJs[index].gambar ?? ''),
+                        backgroundImage: NetworkImage(
+                            LJs[index].object_pengguna.gambar ?? ''),
                         radius: 30,
                       ),
                       title: GestureDetector(
-                        child: Text(LJs[index].nama_lengkap),
+                        child: Text(LJs[index].object_pengguna.nama_lengkap),
                         onTap: () {
                           Navigator.push(
                             context,
@@ -121,8 +124,9 @@ class _RuanganState extends State<Ruangan> {
                           );
                         },
                       ),
-                      subtitle: Text(LJs[index].email),
+                      subtitle: Text(LJs[index].object_pengguna.email),
                     ),
+                    SizedBox(height: 10),
                   ],
                 ),
               );
@@ -130,16 +134,46 @@ class _RuanganState extends State<Ruangan> {
           ),
         ),
         SizedBox(height: 10),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            Column(
+              children: [
+                Text('Current Members'),
+                Text(
+                  LJs[0].object_jadwal.current_member.toString(),
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+              ],
+            ),
+            Column(
+              children: [
+                Text('Minimal Members'),
+                Text(
+                  LJs[0].object_jadwal.object_dolanan.minimal_member.toString(),
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+              ],
+            ),
+          ],
+        ),
+        SizedBox(height: 10),
         ElevatedButton(
           onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => Ngobrol(),
-              ),
-            );
+            if (isCurrentUserInList) {
+              // Jika pengguna aktif ada dalam daftar, navigasikan ke obrolan
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => Ngobrol(),
+                ),
+              );
+            } else {
+              // Jika pengguna aktif tidak ada dalam daftar, jalankan aksi bergabung
+              // Anda mungkin perlu menambahkan logika bergabung sesuai kebutuhan
+            }
           },
-          child: Text('Join'),
+          child: Text(isCurrentUserInList ? 'Buka Obrolan' : 'Join'),
         ),
         SizedBox(height: 10),
         ElevatedButton(
@@ -150,5 +184,14 @@ class _RuanganState extends State<Ruangan> {
         ),
       ],
     );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    cekPengguna().then((String result) {
+      pengguna_aktif = Penggunas.fromJson(jsonDecode(result));
+      bacaData();
+    });
   }
 }

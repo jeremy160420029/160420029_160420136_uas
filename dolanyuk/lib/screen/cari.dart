@@ -21,7 +21,8 @@ class _CariState extends State<Cari> {
 
   Future<String> fetchData() async {
     final response = await http.post(
-        Uri.parse("https://ubaya.me/flutter/160420136/dolanyuk/cari_jadwal.php"),
+        Uri.parse(
+            "https://ubaya.me/flutter/160420136/dolanyuk/cari_jadwal.php"),
         body: {'cari': _txtCari});
 
     if (response.statusCode == 200) {
@@ -65,7 +66,9 @@ class _CariState extends State<Cari> {
                                     image: DecorationImage(
                                         fit: BoxFit.fitWidth,
                                         alignment: FractionalOffset.topCenter,
-                                        image: NetworkImage(jadwals[index].object_dolanan.gambar_dolanan))))),
+                                        image: NetworkImage(jadwals[index]
+                                            .object_dolanan
+                                            .gambar_dolanan))))),
                         ListTile(
                           title: Text(jadwals[index].object_dolanan.nama_dolan,
                               style: TextStyle(
@@ -74,8 +77,11 @@ class _CariState extends State<Cari> {
                           subtitle: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Container(child:Text(jadwals[index].tanggal)), //tanggal
-                                Container(child: Text(jadwals[index].jam)), //jam
+                                Container(
+                                    child:
+                                        Text(jadwals[index].tanggal)), //tanggal
+                                Container(
+                                    child: Text(jadwals[index].jam)), //jam
                                 Container(
                                     //current member vs total member
                                     padding: EdgeInsets.only(
@@ -92,7 +98,15 @@ class _CariState extends State<Cari> {
                                         Container(
                                             margin: EdgeInsets.only(right: 10),
                                             child: Icon(Icons.group)),
-                                        Text(jadwals[index].current_member.toString() + '/' + jadwals[index].object_dolanan.minimal_member.toString() +' orang'),
+                                        Text(jadwals[index]
+                                                .current_member
+                                                .toString() +
+                                            '/' +
+                                            jadwals[index]
+                                                .object_dolanan
+                                                .minimal_member
+                                                .toString() +
+                                            ' orang'),
                                       ],
                                     )),
                                 Container(
@@ -120,7 +134,15 @@ class _CariState extends State<Cari> {
                                               (states) => Colors.white),
                                     ),
                                     label: Text('Party Chat'),
-                                    onPressed: () {},
+                                    onPressed: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => Ruangan(
+                                              jadwalID: jadwals[index].id),
+                                        ),
+                                      );
+                                    },
                                   ),
                                 )
                               ]),
@@ -143,6 +165,20 @@ class _CariState extends State<Cari> {
 
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: TextFormField(
+          decoration: const InputDecoration(
+            icon: Icon(Icons.search),
+            labelText: 'Judul mengandung kata:',
+          ),
+          onFieldSubmitted: (value) {
+            setState(() {
+              _txtCari = value;
+            });
+            bacaData();
+          },
+        ),
+      ),
       body: SingleChildScrollView(
           child: Center(
               child: Container(
@@ -164,28 +200,6 @@ class _CariState extends State<Cari> {
     // TODO: implement initState
     super.initState();
     bacaData();
-  }
-}
-
-class CardJadwal extends StatelessWidget {
-  final String title;
-  final String description;
-
-  const CardJadwal({Key? key, required this.title, required this.description})
-      : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      margin: const EdgeInsets.all(8.0),
-      child: ListTile(
-        title: Text(title),
-        subtitle: Text(description),
-        onTap: () {
-          // Handle onTap event if needed
-        },
-      ),
-    );
   }
 }
 
