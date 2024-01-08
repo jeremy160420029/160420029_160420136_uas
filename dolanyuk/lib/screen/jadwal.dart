@@ -102,7 +102,27 @@ class _JadwalState extends State<Jadwal> {
                           margin: EdgeInsets.only(top: 15),
                           child: Text(jadwals[index].lokasi), //lokasi
                           ),
-                        Container(child: Text(jadwals[index].alamat)) //alamat,
+                        Container(child: Text(jadwals[index].alamat)), //alamat
+                        Container(
+                        margin: EdgeInsets.only(top: 15, bottom:15),
+                        alignment: Alignment.topRight,
+                        child: ElevatedButton.icon(
+                            icon: Icon(Icons.chat_bubble_outline_rounded),
+                            style: ButtonStyle(
+                              minimumSize:
+                                  MaterialStateProperty.resolveWith(
+                                      (states) => Size(120, 40)),
+                              backgroundColor:
+                                  MaterialStateProperty.resolveWith(
+                                      (states) => Colors.purple),
+                              foregroundColor:
+                                  MaterialStateProperty.resolveWith(
+                                      (states) => Colors.white),
+                            ),
+                            label: Text('Party Chat'),
+                            onPressed: () {},
+                          ),
+                        )
                       ]),
                   ),
                 ],
