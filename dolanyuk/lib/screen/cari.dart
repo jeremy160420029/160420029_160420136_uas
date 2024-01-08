@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors, unused_field, depend_on_referenced_packages, prefer_const_literals_to_create_immutables
+// ignore_for_file: prefer_const_constructors, unused_field, prefer_final_fields, non_constant_identifier_names, prefer_const_literals_to_create_immutables, avoid_unnecessary_containers, depend_on_referenced_packages, unused_import, prefer_interpolation_to_compose_strings, sort_child_properties_last, unused_local_variable, avoid_print, annotate_overrides, camel_case_types, avoid_init_to_null, unnecessary_new, unnecessary_null_comparison, sized_box_for_whitespace
 
 import 'dart:convert';
 
@@ -17,12 +17,11 @@ class Cari extends StatefulWidget {
 class _CariState extends State<Cari> {
   String _temp = 'waiting API respond…';
   String _txtCari = '';
-  List<Jadwals> Js = [];
+  List<Jadwals> jadwals = [];
 
   Future<String> fetchData() async {
     final response = await http.post(
-        Uri.parse(
-            "https://ubaya.me/flutter/160420136/dolanyuk/cari_jadwal.php"),
+        Uri.parse("https://ubaya.me/flutter/160420136/dolanyuk/cari_jadwal.php"),
         body: {'cari': _txtCari});
 
     if (response.statusCode == 200) {
@@ -33,23 +32,23 @@ class _CariState extends State<Cari> {
   }
 
   bacaData() {
-    Js.clear();
+    jadwals.clear();
     fetchData().then((value) {
       setState(() {
         Map json = jsonDecode(value);
         for (var _ in json['data']) {
           Jadwals jadwal = Jadwals.fromJson(_);
-          Js.add(jadwal);
+          jadwals.add(jadwal);
         }
       });
     });
   }
 
   Widget DaftarJadwal() {
-    if (Js.isNotEmpty) {
+    if (jadwals.isNotEmpty) {
       return ListView.builder(
           shrinkWrap: true,
-          itemCount: Js.length,
+          itemCount: jadwals.length,
           itemBuilder: (BuildContext ctxt, int index) {
             return new Container(
                 child: Card(
@@ -66,22 +65,17 @@ class _CariState extends State<Cari> {
                                     image: DecorationImage(
                                         fit: BoxFit.fitWidth,
                                         alignment: FractionalOffset.topCenter,
-                                        image: NetworkImage(Js[index]
-                                            .object_dolanan
-                                            .gambar_dolanan))))),
+                                        image: NetworkImage(jadwals[index].object_dolanan.gambar_dolanan))))),
                         ListTile(
-                          title: Text(Js[index].object_dolanan.nama_dolan,
+                          title: Text(jadwals[index].object_dolanan.nama_dolan,
                               style: TextStyle(
                                   fontSize: 15.5,
                                   fontWeight: FontWeight.w500)), //nama dolanan
                           subtitle: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Container(
-                                    child:
-                                        Text(Js[index].tanggal)), //tanggal
-                                Container(
-                                    child: Text(Js[index].jam)), //jam
+                                Container(child:Text(jadwals[index].tanggal)), //tanggal
+                                Container(child: Text(jadwals[index].jam)), //jam
                                 Container(
                                     //current member vs total member
                                     padding: EdgeInsets.only(
@@ -98,24 +92,16 @@ class _CariState extends State<Cari> {
                                         Container(
                                             margin: EdgeInsets.only(right: 10),
                                             child: Icon(Icons.group)),
-                                        Text(Js[index]
-                                                .current_member
-                                                .toString() +
-                                            '/' +
-                                            Js[index]
-                                                .object_dolanan
-                                                .minimal_member
-                                                .toString() +
-                                            ' orang'),
+                                        Text(jadwals[index].current_member.toString() + '/' + jadwals[index].object_dolanan.minimal_member.toString() +' orang'),
                                       ],
                                     )),
                                 Container(
                                   margin: EdgeInsets.only(top: 15),
-                                  child: Text(Js[index].lokasi), //lokasi
+                                  child: Text(jadwals[index].lokasi), //lokasi
                                 ),
                                 Container(
                                     child:
-                                        Text(Js[index].alamat)), //alamat
+                                        Text(jadwals[index].alamat)), //alamat
                                 Container(
                                   margin: EdgeInsets.only(top: 15, bottom: 15),
                                   alignment: Alignment.topRight,
