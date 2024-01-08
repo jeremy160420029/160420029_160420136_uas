@@ -45,7 +45,7 @@ class _CariState extends State<Cari> {
     });
   }
 
-  Widget DaftarJadwalPengguna() {
+  Widget DaftarJadwal() {
     if (Js.isNotEmpty) {
       return ListView.builder(
           shrinkWrap: true,
@@ -78,8 +78,10 @@ class _CariState extends State<Cari> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Container(
-                                    child: Text(Js[index].tanggal)), //tanggal
-                                Container(child: Text(Js[index].jam)), //jam
+                                    child:
+                                        Text(Js[index].tanggal)), //tanggal
+                                Container(
+                                    child: Text(Js[index].jam)), //jam
                                 Container(
                                     //current member vs total member
                                     padding: EdgeInsets.only(
@@ -112,7 +114,29 @@ class _CariState extends State<Cari> {
                                   child: Text(Js[index].lokasi), //lokasi
                                 ),
                                 Container(
-                                    child: Text(Js[index].alamat)) //alamat,
+                                    child:
+                                        Text(Js[index].alamat)), //alamat
+                                Container(
+                                  margin: EdgeInsets.only(top: 15, bottom: 15),
+                                  alignment: Alignment.topRight,
+                                  child: ElevatedButton.icon(
+                                    icon:
+                                        Icon(Icons.chat_bubble_outline_rounded),
+                                    style: ButtonStyle(
+                                      minimumSize:
+                                          MaterialStateProperty.resolveWith(
+                                              (states) => Size(120, 40)),
+                                      backgroundColor:
+                                          MaterialStateProperty.resolveWith(
+                                              (states) => Colors.purple),
+                                      foregroundColor:
+                                          MaterialStateProperty.resolveWith(
+                                              (states) => Colors.white),
+                                    ),
+                                    label: Text('Party Chat'),
+                                    onPressed: () {},
+                                  ),
+                                )
                               ]),
                         ),
                       ],
@@ -137,7 +161,7 @@ class _CariState extends State<Cari> {
           child: Center(
               child: Container(
         margin: EdgeInsets.all(20),
-        child: DaftarJadwalPengguna(),
+        child: DaftarJadwal(),
       ))),
       floatingActionButton: FloatingActionButton(
         onPressed: () {

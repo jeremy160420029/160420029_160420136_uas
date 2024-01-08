@@ -22,13 +22,16 @@ class Jadwals {
 
   factory Jadwals.fromJson(Map<String, dynamic> json) {
     return Jadwals(
-      id: json['jadwal'] as int,
-      tanggal: json['tanggal'] as String,
-      jam: json['jam'] as String,
-      lokasi: json['lokasi'] as String,
-      alamat: json['alamat'] as String,
-      current_member: json['current_member'] as int,
-      object_dolanan: Dolanans.fromJson(json['object_dolanan']) as Dolanans,
+      id: json['jadwal'] as int? ?? 0,
+      tanggal: json['tanggal'] as String? ?? '',
+      jam: json['jam'] as String? ?? '',
+      lokasi: json['lokasi'] as String? ?? '',
+      alamat: json['alamat'] as String? ?? '',
+      current_member: json['current_member'] as int? ?? 0,
+      object_dolanan: json['object_dolanan'] != null
+          ? Dolanans.fromJson(json['object_dolanan']) as Dolanans
+          : Dolanans(
+              id: 0, nama_dolan: '', minimal_member: 0, gambar_dolanan: ''),
     );
   }
 

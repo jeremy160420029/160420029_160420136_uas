@@ -3,7 +3,7 @@
 import 'dart:convert';
 
 import 'package:dolanyuk/class/penggunas.dart';
-import 'package:dolanyuk/screen/profil.dart';
+import 'package:dolanyuk/main.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
@@ -42,7 +42,9 @@ class _UpdatePasswordState extends State<UpdatePassword> {
 
         Navigator.pop(context);
         Navigator.pushReplacement(
-            context, MaterialPageRoute(builder: (context) => Profil()));
+            context,
+            MaterialPageRoute(
+                builder: (context) => MyHomePage(), maintainState: false));
       } else if (json['result'] == 'fail') {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           content: Text(json['message']),
