@@ -22,6 +22,9 @@ class _UpdateProfilState extends State<UpdateProfil> {
   String _nama_lengkap = '';
   String _photo_url = '';
 
+  TextEditingController _namaLengkapController = TextEditingController();
+  GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
   void update() async {
     final response = await http.post(
       Uri.parse(
@@ -71,11 +74,18 @@ class _UpdateProfilState extends State<UpdateProfil> {
   void initState() {
     super.initState();
     _userDataFuture = cekPengguna();
+    _namaLengkapController.addListener(() {
+      _nama_lengkap = _namaLengkapController.text;
+    });
   }
 
   Future<String> cekPengguna() async {
     final prefs = await SharedPreferences.getInstance();
     String json_pengguna_aktif = prefs.getString("pengguna_aktif") ?? '';
+
+    _namaLengkapController.text =
+        Penggunas.fromJson(jsonDecode(json_pengguna_aktif)).nama_lengkap;
+
     return json_pengguna_aktif;
   }
 
@@ -96,66 +106,69 @@ class _UpdateProfilState extends State<UpdateProfil> {
 
               return Padding(
                 padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    CircleAvatar(
-                      backgroundImage: NetworkImage(pengguna_aktif?.gambar ??
-                          "https://chi-care.org/newdesign/wp-content/uploads/2023/05/Dummy-Person.png"),
-                      radius: 50,
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 10),
-                      child: TextFormField(
-                        initialValue: pengguna_aktif?.nama_lengkap ?? '',
-                        onChanged: (value) {
-                          _nama_lengkap = value;
+                child: Form(
+                  key: _formKey,
+                  autovalidateMode: AutovalidateMode.onUserInteraction,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      CircleAvatar(
+                        backgroundImage: NetworkImage(pengguna_aktif?.gambar ??
+                            "https://chi-care.org/newdesign/wp-content/uploads/2023/05/Dummy-Person.png"),
+                        radius: 50,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 10),
+                        child: TextFormField(
+                          controller: _namaLengkapController,
+                          decoration: InputDecoration(
+                            labelText: 'Nama Pengguna',
+                            border: OutlineInputBorder(),
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 10),
+                        child: TextFormField(
+                          initialValue: pengguna_aktif?.email ?? '',
+                          readOnly: true,
+                          decoration: InputDecoration(
+                            labelText: 'Email Pengguna',
+                            border: OutlineInputBorder(),
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 10),
+                        child: TextField(
+                          decoration: InputDecoration(
+                            labelText: 'Photo URL',
+                            hintText: 'Enter Photo URL',
+                            border: OutlineInputBorder(),
+                          ),
+                          onChanged: (value) {
+                            _photo_url = value;
+                          },
+                        ),
+                      ),
+                      SizedBox(height: 20),
+                      ElevatedButton(
+                        onPressed: () {
+                          // Save the form
+                          _formKey.currentState?.save();
+                          update();
                         },
-                        decoration: InputDecoration(
-                          labelText: 'Nama Pengguna',
-                          border: OutlineInputBorder(),
-                        ),
+                        child: Text('Simpan'),
                       ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 10),
-                      child: TextFormField(
-                        initialValue: pengguna_aktif?.email ?? '',
-                        readOnly: true,
-                        decoration: InputDecoration(
-                          labelText: 'Email Pengguna',
-                          border: OutlineInputBorder(),
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 10),
-                      child: TextField(
-                        decoration: InputDecoration(
-                          labelText: 'Photo URL',
-                          hintText: 'Enter Photo URL',
-                          border: OutlineInputBorder(),
-                        ),
-                        onChanged: (value) {
-                          _photo_url = value;
+                      SizedBox(height: 20),
+                      ElevatedButton(
+                        onPressed: () {
+                          Navigator.pop(context);
                         },
+                        child: Text('Kembali'),
                       ),
-                    ),
-                    SizedBox(height: 20),
-                    ElevatedButton(
-                      onPressed: () {
-                        update();
-                      },
-                      child: Text('Simpan'),
-                    ),
-                    SizedBox(height: 20),
-                    ElevatedButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      child: Text('Kembali'),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               );
             }

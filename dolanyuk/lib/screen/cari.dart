@@ -3,6 +3,7 @@
 import 'dart:convert';
 
 import 'package:dolanyuk/class/jadwals.dart';
+import 'package:dolanyuk/screen/ruangan.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
@@ -33,51 +34,119 @@ class _CariState extends State<Cari> {
 
   bacaData() {
     Js.clear();
-    Future<String> data = fetchData();
-    data.then((value) {
-      Map json = jsonDecode(value);
-      for (var jadwal in json['data']) {
-        Jadwals js = Jadwals.fromJson(jadwal);
-        Js.add(js);
-      }
+    fetchData().then((value) {
       setState(() {
-        _temp = Js[30].lokasi;
+        Map json = jsonDecode(value);
+        for (var _ in json['data']) {
+          Jadwals jadwal = Jadwals.fromJson(_);
+          Js.add(jadwal);
+        }
       });
     });
   }
 
-  Widget DaftarJadwal(data) {
-    List<Jadwals> Js = [];
-    Map json = jsonDecode(data);
-    for (var jadwal in json['data']) {
-      Jadwals js = Jadwals.fromJson(jadwal);
-      Js.add(js);
-    }
-    return ListView.builder(
-        itemCount: Js.length,
-        itemBuilder: (BuildContext ctxt, int index) {
-          return new Card(
-              child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              // ListTile(
-              //   leading: Icon(Icons.movie, size: 30),
-              //   title: GestureDetector(
-              //       child: Text(Js[index].lokasi),
-              //       onTap: () {
-              //         Navigator.push(
-              //           context,
-              //           MaterialPageRoute(
-              //             builder: (context) =>
-              //                 DetailPop(movieID: Js[index].id),
-              //           ),
-              //         );
-              //       }),
-              //   subtitle: Text(Js[index].overview),
-              // ),
+  Widget DaftarJadwalPengguna() {
+    if (Js.isNotEmpty) {
+      return ListView.builder(
+          shrinkWrap: true,
+          itemCount: Js.length,
+          itemBuilder: (BuildContext ctxt, int index) {
+            return new Container(
+                child: Card(
+                    margin: EdgeInsets.only(top: 20),
+                    clipBehavior: Clip.antiAlias,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                        AspectRatio(
+                            //gambar dolanan
+                            aspectRatio: 487 / 150,
+                            child: Container(
+                                decoration: BoxDecoration(
+                                    image: DecorationImage(
+                                        fit: BoxFit.fitWidth,
+                                        alignment: FractionalOffset.topCenter,
+                                        image: NetworkImage(Js[index]
+                                            .object_dolanan
+                                            .gambar_dolanan))))),
+                        ListTile(
+                          title: Text(Js[index].object_dolanan.nama_dolan,
+                              style: TextStyle(
+                                  fontSize: 15.5,
+                                  fontWeight: FontWeight.w500)), //nama dolanan
+                          subtitle: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Container(
+                                    child: Text(Js[index].tanggal)), //tanggal
+                                Container(child: Text(Js[index].jam)), //jam
+                                Container(
+                                    //current member vs total member
+                                    padding: EdgeInsets.only(
+                                        left: 5, right: 5, top: 2, bottom: 2),
+                                    width: 120,
+                                    decoration: BoxDecoration(
+                                      border:
+                                          Border.all(color: Colors.blueGrey),
+                                      borderRadius: BorderRadius.circular(5.0),
+                                      shape: BoxShape.rectangle,
+                                    ),
+                                    child: Row(
+                                      children: [
+                                        Container(
+                                            margin: EdgeInsets.only(right: 10),
+                                            child: Icon(Icons.group)),
+                                        Text(Js[index]
+                                                .current_member
+                                                .toString() +
+                                            '/' +
+                                            Js[index]
+                                                .object_dolanan
+                                                .minimal_member
+                                                .toString() +
+                                            ' orang'),
+                                      ],
+                                    )),
+                                Container(
+                                  margin: EdgeInsets.only(top: 15),
+                                  child: Text(Js[index].lokasi), //lokasi
+                                ),
+                                Container(
+                                    child: Text(Js[index].alamat)) //alamat,
+                              ]),
+                        ),
+                      ],
+                    )));
+          });
+    } else {
+      return Container(
+          padding: EdgeInsets.only(top: 250),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text('Jadwal main masih kosong ni'),
+              Text('Cari konco main atau bikin jadwal baru aja')
             ],
           ));
-        });
+    }
+  }
+
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: SingleChildScrollView(
+          child: Center(
+              child: Container(
+        margin: EdgeInsets.all(20),
+        child: DaftarJadwalPengguna(),
+      ))),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.pushNamed(context, 'buat');
+        },
+        tooltip: 'Buat Jadwal',
+        child: const Icon(Icons.edit),
+      ),
+    );
   }
 
   @override
@@ -85,42 +154,6 @@ class _CariState extends State<Cari> {
     // TODO: implement initState
     super.initState();
     bacaData();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(title: const Text('Cari Jadwal')),
-        body: ListView(children: <Widget>[
-          TextFormField(
-            decoration: const InputDecoration(
-              icon: Icon(Icons.search),
-              labelText: 'Judul mengandung kata:',
-            ),
-            onFieldSubmitted: (value) {
-              setState(() {
-                _txtCari = value;
-              });
-            },
-          ),
-          Container(
-              height: MediaQuery.of(context).size.height / 2,
-              child: FutureBuilder(
-                  future: fetchData(),
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.done) {
-                      if (snapshot.hasError) {
-                        return Text("Error! ${snapshot.error}");
-                      } else if (snapshot.hasData) {
-                        return DaftarJadwal(snapshot.data.toString());
-                      } else {
-                        return const Text("No data");
-                      }
-                    } else {
-                      return const Center(child: CircularProgressIndicator());
-                    }
-                  }))
-        ]));
   }
 }
 

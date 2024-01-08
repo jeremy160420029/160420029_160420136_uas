@@ -1,17 +1,15 @@
 import 'package:flutter/material.dart';
 
-class ngobrol extends StatefulWidget {
-  const ngobrol({super.key});
+class Ngobrol extends StatefulWidget {
+  const Ngobrol({super.key});
 
   @override
-  State<ngobrol> createState() => _ngobrolState();
+  State<Ngobrol> createState() => _NgobrolState();
 }
 
-class _ngobrolState extends State<ngobrol> {
+class _NgobrolState extends State<Ngobrol> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Text('Ngobrol')
-    );
+    return Scaffold(body: Text('Ngobrol'));
   }
 }

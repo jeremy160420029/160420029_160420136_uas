@@ -50,7 +50,7 @@ class MyApp extends StatelessWidget {
         'jadwal': (context) => Jadwal(),
         'cari': (context) => Cari(),
         'profil': (context) => Profil(),
-        'ngobrol': (context) => ngobrol(),
+        'ngobrol': (context) => Ngobrol(),
         'buat': (context) => buat(),
       },
       theme: ThemeData(
