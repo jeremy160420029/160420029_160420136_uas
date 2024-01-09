@@ -149,8 +149,9 @@ class _RuanganState extends State<Ruangan> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) =>
-                                  Ngobrol(jadwalID: LJs[0].object_jadwal.id),
+                              builder: (context) => Ngobrol(
+                                  jadwalID: LJs[index].object_jadwal.id,
+                                  penggunaID: pengguna_aktif!.id),
                             ),
                           );
                         },
@@ -196,8 +197,9 @@ class _RuanganState extends State<Ruangan> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) =>
-                      Ngobrol(jadwalID: LJs[0].object_jadwal.id),
+                  builder: (context) => Ngobrol(
+                      jadwalID: LJs[0].object_jadwal.id,
+                      penggunaID: pengguna_aktif!.id),
                 ),
               );
             } else {

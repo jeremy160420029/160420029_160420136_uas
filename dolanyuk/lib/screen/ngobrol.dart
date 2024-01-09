@@ -11,7 +11,8 @@ Penggunas? pengguna_aktif = null;
 
 class Ngobrol extends StatefulWidget {
   int jadwalID;
-  Ngobrol({Key? key, required this.jadwalID}) : super(key: key);
+  int penggunaID;
+  Ngobrol({super.key, required this.jadwalID, required this.penggunaID});
 
   @override
   State<Ngobrol> createState() => _NgobrolState();
@@ -35,7 +36,8 @@ class _NgobrolState extends State<Ngobrol> {
       Map<String, dynamic> json = jsonDecode(response.body);
       if (json['data'] != null) {
         List<dynamic> dataList = json['data'];
-        List<Ngobrols> result = dataList.map((data) => Ngobrols.fromJson(data)).toList();
+        List<Ngobrols> result =
+            dataList.map((data) => Ngobrols.fromJson(data)).toList();
         return result;
       } else {
         setState(() {
@@ -83,10 +85,16 @@ class _NgobrolState extends State<Ngobrol> {
                         margin: EdgeInsets.all(8.0),
                         child: ListTile(
                           leading: CircleAvatar(
-                            backgroundImage: NetworkImage(obrolan.list_jadwals.object_pengguna.gambar ?? 'https://chi-care.org/newdesign/wp-content/uploads/2023/05/Dummy-Person.png'),
+                            backgroundImage: NetworkImage(obrolan
+                                    .list_jadwals.object_pengguna.gambar ??
+                                'https://chi-care.org/newdesign/wp-content/uploads/2023/05/Dummy-Person.png'),
                           ),
-                          title: Text(obrolan.list_jadwals.object_pengguna.nama_lengkap),
-                          subtitle: Text(obrolan.isi, style: TextStyle(fontSize: 15),),
+                          title: Text(obrolan
+                              .list_jadwals.object_pengguna.nama_lengkap),
+                          subtitle: Text(
+                            obrolan.isi,
+                            style: TextStyle(fontSize: 15),
+                          ),
                         ),
                       );
                     },
@@ -113,9 +121,7 @@ class _NgobrolState extends State<Ngobrol> {
                 SizedBox(width: 8),
                 ElevatedButton(
                   onPressed: () {
-                    kirimObrolan(
-                        obrolanList[0].list_jadwals.list_jadwal_id.toString(),
-                        _txtIsi.toString());
+                    kirimObrolan(_txtIsi.toString());
                   },
                   child: Text('Kirim'),
                 ),
@@ -127,10 +133,14 @@ class _NgobrolState extends State<Ngobrol> {
     );
   }
 
-  void kirimObrolan(String listJadwal, String isi) async {
+  void kirimObrolan(String isi) async {
     final response = await http.post(
       Uri.parse('https://ubaya.me/flutter/160420136/dolanyuk/add_obrolan.php'),
-      body: {'list_jadwal': listJadwal, 'isi': isi},
+      body: {
+        'jadwal': widget.jadwalID.toString(),
+        'pengguna': widget.penggunaID.toString(),
+        'isi': isi
+      },
     );
 
     if (response.statusCode == 200) {
@@ -145,8 +155,9 @@ class _NgobrolState extends State<Ngobrol> {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (context) =>
-                Ngobrol(jadwalID: obrolanList[0].list_jadwals.object_jadwal.id),
+            builder: (context) => Ngobrol(
+                jadwalID: obrolanList[0].list_jadwals.object_jadwal.id,
+                penggunaID: pengguna_aktif!.id),
             maintainState: false,
           ),
         );
@@ -168,12 +179,4 @@ class _NgobrolState extends State<Ngobrol> {
       bacaData();
     });
   }
-}
-
-void main() {
-  runApp(
-    MaterialApp(
-      home: Ngobrol(jadwalID: 1),
-    ),
-  );
 }
