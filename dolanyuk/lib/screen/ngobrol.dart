@@ -156,8 +156,7 @@ class _NgobrolState extends State<Ngobrol> {
           context,
           MaterialPageRoute(
             builder: (context) => Ngobrol(
-                jadwalID: obrolanList[0].list_jadwals.object_jadwal.id,
-                penggunaID: pengguna_aktif!.id),
+                jadwalID: widget.jadwalID, penggunaID: pengguna_aktif!.id),
             maintainState: false,
           ),
         );
