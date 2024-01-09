@@ -1,5 +1,6 @@
-import 'dart:convert';
+// ignore_for_file: prefer_const_constructors, unused_field, prefer_final_fields, non_constant_identifier_names, prefer_const_literals_to_create_immutables, avoid_unnecessary_containers, depend_on_referenced_packages, unused_import, prefer_interpolation_to_compose_strings, sort_child_properties_last, unused_local_variable, avoid_print, annotate_overrides, camel_case_types, avoid_init_to_null, must_be_immutable
 
+import 'dart:convert';
 import 'package:dolanyuk/class/ngobrols.dart';
 import 'package:dolanyuk/class/penggunas.dart';
 import 'package:flutter/material.dart';
@@ -32,11 +33,9 @@ class _NgobrolState extends State<Ngobrol> {
 
     if (response.statusCode == 200) {
       Map<String, dynamic> json = jsonDecode(response.body);
-
       if (json['data'] != null) {
         List<dynamic> dataList = json['data'];
-        List<Ngobrols> result =
-            dataList.map((data) => Ngobrols.fromJson(data)).toList();
+        List<Ngobrols> result = dataList.map((data) => Ngobrols.fromJson(data)).toList();
         return result;
       } else {
         setState(() {
@@ -84,15 +83,10 @@ class _NgobrolState extends State<Ngobrol> {
                         margin: EdgeInsets.all(8.0),
                         child: ListTile(
                           leading: CircleAvatar(
-                            backgroundImage: NetworkImage(obrolanList[index]
-                                    .list_jadwals
-                                    .object_pengguna
-                                    .gambar ??
-                                ''),
+                            backgroundImage: NetworkImage(obrolan.list_jadwals.object_pengguna.gambar ?? 'https://chi-care.org/newdesign/wp-content/uploads/2023/05/Dummy-Person.png'),
                           ),
-                          title: Text(obrolan.isi),
-                          subtitle: Text(obrolan
-                              .list_jadwals.object_pengguna.nama_lengkap),
+                          title: Text(obrolan.list_jadwals.object_pengguna.nama_lengkap),
+                          subtitle: Text(obrolan.isi, style: TextStyle(fontSize: 15),),
                         ),
                       );
                     },

@@ -1,4 +1,4 @@
-// ignore_for_file: non_constant_identifier_names
+// ignore_for_file: prefer_const_constructors, unused_field, prefer_final_fields, non_constant_identifier_names, prefer_const_literals_to_create_immutables, avoid_unnecessary_containers, depend_on_referenced_packages, unused_import, prefer_interpolation_to_compose_strings, sort_child_properties_last, unused_local_variable, avoid_print, annotate_overrides, camel_case_types, avoid_init_to_null, unnecessary_cast
 
 import 'package:dolanyuk/class/dolanans.dart';
 import 'package:dolanyuk/class/jadwals.dart';
@@ -19,25 +19,9 @@ class ListJadwals {
 
   factory ListJadwals.fromJson(Map<String, dynamic> json) {
     return ListJadwals(
-      list_jadwal_id: json['list_jadwal_id'] as int,
-      object_pengguna: json['object_pengguna'] != null
-          ? Penggunas.fromJson(json['object_pengguna']) as Penggunas
-          : Penggunas(
-              id: 0, email: '', nama_lengkap: '', gambar: '', password: ''),
-      object_jadwal: json['object_jadwal'] != null
-          ? Jadwals.fromJson(json['object_jadwal']) as Jadwals
-          : Jadwals(
-              id: 0,
-              tanggal: '',
-              jam: '',
-              lokasi: '',
-              alamat: '',
-              current_member: 0,
-              object_dolanan: Dolanans(
-                  id: 0,
-                  nama_dolan: '',
-                  minimal_member: 0,
-                  gambar_dolanan: '')),
+      list_jadwal_id: json['id']?? 0 as int,
+      object_pengguna: Penggunas.fromJson(json['object_pengguna']) as Penggunas,
+      object_jadwal: Jadwals.fromJson(json['object_jadwal']) as Jadwals
     );
   }
 

@@ -1,4 +1,4 @@
-// ignore_for_file: non_constant_identifier_names
+// ignore_for_file: non_constant_identifier_names, unnecessary_cast
 
 import 'package:dolanyuk/class/dolanans.dart';
 import 'package:dolanyuk/class/jadwals.dart';
@@ -18,26 +18,9 @@ class Ngobrols {
 
   factory Ngobrols.fromJson(Map<String, dynamic> json) {
     return Ngobrols(
-      id: json['id'] as int? ?? 0,
-      isi: json['isi'] as String? ?? '',
-      list_jadwals: json['list_jadwalss'] != null
-          ? ListJadwals.fromJson(json['list_jadwalss']) as ListJadwals
-          : ListJadwals(
-              list_jadwal_id: json['list_jadwal_id'] as int,
-              object_pengguna: Penggunas(
-                  id: 0, email: '', nama_lengkap: '', gambar: '', password: ''),
-              object_jadwal: Jadwals(
-                  id: 0,
-                  tanggal: '',
-                  jam: '',
-                  lokasi: '',
-                  alamat: '',
-                  current_member: 0,
-                  object_dolanan: Dolanans(
-                      id: 0,
-                      nama_dolan: '',
-                      minimal_member: 0,
-                      gambar_dolanan: ''))),
+      id: json['ngobrol_id'] as int,
+      isi: json['isi'] as String,
+      list_jadwals: ListJadwals.fromJson(json['list_jadwals']) as ListJadwals
     );
   }
 
