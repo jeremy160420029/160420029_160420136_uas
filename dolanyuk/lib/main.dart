@@ -50,7 +50,6 @@ class MyApp extends StatelessWidget {
         'jadwal': (context) => Jadwal(),
         'cari': (context) => Cari(),
         'profil': (context) => Profil(),
-        'ngobrol': (context) => Ngobrol(),
         'buat': (context) => buat(),
       },
       theme: ThemeData(
@@ -136,12 +135,6 @@ class _MyHomePageState extends State<MyHomePage> {
               leading: new Icon(Icons.person),
               onTap: () {
                 Navigator.pushNamed(context, 'profil');
-              }),
-          ListTile(
-              title: new Text("Party Chat"),
-              leading: new Icon(Icons.chat),
-              onTap: () {
-                Navigator.pushNamed(context, 'ngobrol');
               }),
           ListTile(
               title: new Text("Logout", style: TextStyle(color: Colors.red)),

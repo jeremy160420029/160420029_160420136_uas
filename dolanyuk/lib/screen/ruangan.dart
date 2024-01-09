@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:dolanyuk/class/list_jadwals.dart';
 import 'package:dolanyuk/class/penggunas.dart';
+import 'package:dolanyuk/main.dart';
 import 'package:dolanyuk/screen/ngobrol.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -56,6 +57,35 @@ class _RuanganState extends State<Ruangan> {
             : 'No data'; // Update indexing logic
       });
     });
+  }
+
+  void join(penggunaID, jadwalID) async {
+    final response = await http.post(
+      Uri.parse('https://ubaya.me/flutter/160420136/dolanyuk/join.php'),
+      body: {'pengguna': penggunaID, 'jadwal': jadwalID},
+    );
+
+    if (response.statusCode == 200) {
+      Map json = jsonDecode(response.body);
+
+      if (json['result'] == 'success') {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text('Berhasil masuk ke dalam Ruangan'),
+        ));
+
+        Navigator.pop(context);
+        Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+                builder: (context) => MyHomePage(), maintainState: false));
+      } else if (json['result'] == 'fail') {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text(json['message']),
+        ));
+      }
+    } else {
+      throw Exception('Failed to read API');
+    }
   }
 
   @override
@@ -119,7 +149,8 @@ class _RuanganState extends State<Ruangan> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => Ngobrol(),
+                              builder: (context) =>
+                                  Ngobrol(jadwalID: LJs[0].object_jadwal.id),
                             ),
                           );
                         },
@@ -165,12 +196,13 @@ class _RuanganState extends State<Ruangan> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => Ngobrol(),
+                  builder: (context) =>
+                      Ngobrol(jadwalID: LJs[0].object_jadwal.id),
                 ),
               );
             } else {
-              // Jika pengguna aktif tidak ada dalam daftar, jalankan aksi bergabung
-              // Anda mungkin perlu menambahkan logika bergabung sesuai kebutuhan
+              join(pengguna_aktif?.id.toString(),
+                  LJs[0].object_jadwal.id.toString());
             }
           },
           child: Text(isCurrentUserInList ? 'Buka Obrolan' : 'Join'),
