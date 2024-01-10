@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors, unused_field, prefer_final_fields, non_constant_identifier_names, prefer_const_literals_to_create_immutables, avoid_unnecessary_containers, depend_on_referenced_packages, unused_import, prefer_interpolation_to_compose_strings, sort_child_properties_last, unused_local_variable, avoid_print, annotate_overrides, camel_case_types, avoid_init_to_null, unnecessary_new, unnecessary_null_comparison, sized_box_for_whitespace
+// ignore_for_file: prefer_const_constructors, unused_field, prefer_final_fields, non_constant_identifier_names, prefer_const_literals_to_create_immutables, avoid_unnecessary_containers, depend_on_referenced_packages, unused_import, prefer_interpolation_to_compose_strings, sort_child_properties_last, unused_local_variable, avoid_print, annotate_overrides, camel_case_types, avoid_init_to_null, unnecessary_new, unnecessary_null_comparison, sized_box_for_whitespace, use_build_context_synchronously
 
 import 'dart:convert';
 
@@ -6,6 +6,9 @@ import 'package:dolanyuk/class/jadwals.dart';
 import 'package:dolanyuk/screen/ruangan.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
+import '../class/penggunas.dart';
+import '../main.dart';
 
 class Cari extends StatefulWidget {
   const Cari({Key? key}) : super(key: key);
@@ -14,16 +17,25 @@ class Cari extends StatefulWidget {
   State<Cari> createState() => _CariState();
 }
 
+Penggunas? pengguna_aktif = null;
+
 class _CariState extends State<Cari> {
   String _temp = 'waiting API respond…';
   String _txtCari = '';
   List<Jadwals> jadwals = [];
 
+  
+  Future<String> cekPengguna() async {
+    final prefs = await SharedPreferences.getInstance();
+    String json_pengguna_aktif = prefs.getString("pengguna_aktif") ?? '';
+    return json_pengguna_aktif;
+  }
+
   Future<String> fetchData() async {
     final response = await http.post(
         Uri.parse(
             "https://ubaya.me/flutter/160420136/dolanyuk/cari_jadwal.php"),
-        body: {'cari': _txtCari});
+        body: {'cari': _txtCari, 'pengguna_id': pengguna_aktif!.id.toString()});
 
     if (response.statusCode == 200) {
       return response.body;
@@ -43,6 +55,48 @@ class _CariState extends State<Cari> {
         }
       });
     });
+  }
+
+  void join(penggunaID, jadwalID) async {
+    final response = await http.post(
+      Uri.parse('https://ubaya.me/flutter/160420136/dolanyuk/join.php'),
+      body: {'pengguna': penggunaID, 'jadwal': jadwalID},
+    );
+
+    if (response.statusCode == 200) {
+      Map json = jsonDecode(response.body);
+
+      if (json['result'] == 'success') {
+        showDialog<String>( context: context,
+          builder: (BuildContext context) => AlertDialog(
+                title: Text('Sukses Login', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),),
+                content: Text('Selamat, kamu berhasil join pada jadwal dolanan. Kamu bisa ngobrol bareng teman-teman dolananmu. Temanmu menghargai komitmemu untuk hadir dan bermain bersama!', style: TextStyle(fontSize: 16),),
+                actions: <Widget>[
+                  TextButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                      setState(() {
+                        bacaData();
+                      });
+                    },
+                    child: const Text('OK'),
+                    style: ButtonStyle(
+                      shape: MaterialStateProperty.resolveWith((states) => RoundedRectangleBorder(borderRadius: BorderRadius.circular(15))),
+                      backgroundColor: MaterialStateProperty.resolveWith((states) => Colors.purple[200]),
+                      foregroundColor: MaterialStateProperty.resolveWith((states) => Colors.black),
+                    ),
+                  ),
+                ],
+              ));
+       
+      } else if (json['result'] == 'fail') {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text(json['message']),
+        ));
+      }
+    } else {
+      throw Exception('Failed to read API');
+    }
   }
 
   Widget DaftarJadwal() {
@@ -83,32 +137,19 @@ class _CariState extends State<Cari> {
                                 Container(
                                     child: Text(jadwals[index].jam)), //jam
                                 Container(
-                                    //current member vs total member
-                                    padding: EdgeInsets.only(
-                                        left: 5, right: 5, top: 2, bottom: 2),
-                                    width: 120,
-                                    decoration: BoxDecoration(
-                                      border:
-                                          Border.all(color: Colors.blueGrey),
-                                      borderRadius: BorderRadius.circular(5.0),
-                                      shape: BoxShape.rectangle,
-                                    ),
-                                    child: Row(
-                                      children: [
-                                        Container(
-                                            margin: EdgeInsets.only(right: 10),
-                                            child: Icon(Icons.group)),
-                                        Text(jadwals[index]
-                                                .current_member
-                                                .toString() +
-                                            '/' +
-                                            jadwals[index]
-                                                .object_dolanan
-                                                .minimal_member
-                                                .toString() +
-                                            ' orang'),
-                                      ],
-                                    )),
+                                    child: ElevatedButton.icon(
+                                      onPressed: (){
+                                        Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => Ruangan(
+                                              jadwalID: jadwals[index].id,),
+                                        ),
+                                      );
+                                      }, 
+                                      icon: Icon(Icons.group), 
+                                      label: Text(jadwals[index].current_member.toString() +'/' +jadwals[index].object_dolanan.minimal_member.toString() +' orang'), 
+                                  )),
                                 Container(
                                   margin: EdgeInsets.only(top: 15),
                                   child: Text(jadwals[index].lokasi), //lokasi
@@ -121,7 +162,7 @@ class _CariState extends State<Cari> {
                                   alignment: Alignment.topRight,
                                   child: ElevatedButton.icon(
                                     icon:
-                                        Icon(Icons.chat_bubble_outline_rounded),
+                                        Icon(Icons.login),
                                     style: ButtonStyle(
                                       minimumSize:
                                           MaterialStateProperty.resolveWith(
@@ -133,15 +174,10 @@ class _CariState extends State<Cari> {
                                           MaterialStateProperty.resolveWith(
                                               (states) => Colors.white),
                                     ),
-                                    label: Text('Party Chat'),
+                                    label: Text('Join'),
                                     onPressed: () {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) => Ruangan(
-                                              jadwalID: jadwals[index].id),
-                                        ),
-                                      );
+                                      //todo: tolong pindahin fungsi join kesini 
+                                      join(pengguna_aktif?.id.toString(), jadwals[index].id.toString());
                                     },
                                   ),
                                 )
@@ -197,9 +233,11 @@ class _CariState extends State<Cari> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
-    bacaData();
+    cekPengguna().then((String result) {
+      pengguna_aktif = Penggunas.fromJson(jsonDecode(result));
+      bacaData();
+    });
   }
 }
 

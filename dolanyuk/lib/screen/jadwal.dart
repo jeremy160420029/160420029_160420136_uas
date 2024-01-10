@@ -2,6 +2,7 @@
 
 import 'dart:convert';
 import 'package:dolanyuk/class/jadwals.dart';
+import 'package:dolanyuk/screen/ngobrol.dart';
 import 'package:dolanyuk/screen/ruangan.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -90,32 +91,19 @@ class _JadwalState extends State<Jadwal> {
                                 Container(
                                     child: Text(jadwals[index].jam)), //jam
                                 Container(
-                                    //current member vs total member
-                                    padding: EdgeInsets.only(
-                                        left: 5, right: 5, top: 2, bottom: 2),
-                                    width: 120,
-                                    decoration: BoxDecoration(
-                                      border:
-                                          Border.all(color: Colors.blueGrey),
-                                      borderRadius: BorderRadius.circular(5.0),
-                                      shape: BoxShape.rectangle,
-                                    ),
-                                    child: Row(
-                                      children: [
-                                        Container(
-                                            margin: EdgeInsets.only(right: 10),
-                                            child: Icon(Icons.group)),
-                                        Text(jadwals[index]
-                                                .current_member
-                                                .toString() +
-                                            '/' +
-                                            jadwals[index]
-                                                .object_dolanan
-                                                .minimal_member
-                                                .toString() +
-                                            ' orang'),
-                                      ],
-                                    )),
+                                    child: ElevatedButton.icon(
+                                      onPressed: (){
+                                        Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => Ruangan(
+                                              jadwalID: jadwals[index].id,),
+                                        ),
+                                      );
+                                      }, 
+                                      icon: Icon(Icons.group), 
+                                      label: Text(jadwals[index].current_member.toString() +'/' +jadwals[index].object_dolanan.minimal_member.toString() +' orang'), 
+                                  )),
                                 Container(
                                   margin: EdgeInsets.only(top: 15),
                                   child: Text(jadwals[index].lokasi), //lokasi
@@ -145,8 +133,8 @@ class _JadwalState extends State<Jadwal> {
                                       Navigator.push(
                                         context,
                                         MaterialPageRoute(
-                                          builder: (context) =>
-                                              Ruangan(jadwalID: jadwals[index].id),
+                                          builder: (context) => Ngobrol(
+                                              jadwalID: jadwals[index].id, penggunaID: pengguna_aktif!.id,),
                                         ),
                                       );
                                     },
