@@ -24,7 +24,6 @@ class _CariState extends State<Cari> {
   String _txtCari = '';
   List<Jadwals> jadwals = [];
 
-  
   Future<String> cekPengguna() async {
     final prefs = await SharedPreferences.getInstance();
     String json_pengguna_aktif = prefs.getString("pengguna_aktif") ?? '';
@@ -67,28 +66,38 @@ class _CariState extends State<Cari> {
       Map json = jsonDecode(response.body);
 
       if (json['result'] == 'success') {
-        showDialog<String>( context: context,
-          builder: (BuildContext context) => AlertDialog(
-                title: Text('Sukses Login', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),),
-                content: Text('Selamat, kamu berhasil join pada jadwal dolanan. Kamu bisa ngobrol bareng teman-teman dolananmu. Temanmu menghargai komitmemu untuk hadir dan bermain bersama!', style: TextStyle(fontSize: 16),),
-                actions: <Widget>[
-                  TextButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                      setState(() {
-                        bacaData();
-                      });
-                    },
-                    child: const Text('OK'),
-                    style: ButtonStyle(
-                      shape: MaterialStateProperty.resolveWith((states) => RoundedRectangleBorder(borderRadius: BorderRadius.circular(15))),
-                      backgroundColor: MaterialStateProperty.resolveWith((states) => Colors.purple[200]),
-                      foregroundColor: MaterialStateProperty.resolveWith((states) => Colors.black),
-                    ),
+        showDialog<String>(
+            context: context,
+            builder: (BuildContext context) => AlertDialog(
+                  title: Text(
+                    'Sukses Join',
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   ),
-                ],
-              ));
-       
+                  content: Text(
+                    'Selamat, kamu berhasil join pada jadwal dolanan. Kamu bisa ngobrol bareng teman-teman dolananmu. Temanmu menghargai komitmemu untuk hadir dan bermain bersama!',
+                    style: TextStyle(fontSize: 16),
+                  ),
+                  actions: <Widget>[
+                    TextButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                        setState(() {
+                          bacaData();
+                        });
+                      },
+                      child: const Text('OK'),
+                      style: ButtonStyle(
+                        shape: MaterialStateProperty.resolveWith((states) =>
+                            RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(15))),
+                        backgroundColor: MaterialStateProperty.resolveWith(
+                            (states) => Colors.purple[200]),
+                        foregroundColor: MaterialStateProperty.resolveWith(
+                            (states) => Colors.black),
+                      ),
+                    ),
+                  ],
+                ));
       } else if (json['result'] == 'fail') {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           content: Text(json['message']),
@@ -138,18 +147,26 @@ class _CariState extends State<Cari> {
                                     child: Text(jadwals[index].jam)), //jam
                                 Container(
                                     child: ElevatedButton.icon(
-                                      onPressed: (){
-                                        Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) => Ruangan(
-                                              jadwalID: jadwals[index].id,),
+                                  onPressed: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => Ruangan(
+                                          jadwalID: jadwals[index].id,
                                         ),
-                                      );
-                                      }, 
-                                      icon: Icon(Icons.group), 
-                                      label: Text(jadwals[index].current_member.toString() +'/' +jadwals[index].object_dolanan.minimal_member.toString() +' orang'), 
-                                  )),
+                                      ),
+                                    );
+                                  },
+                                  icon: Icon(Icons.group),
+                                  label: Text(
+                                      jadwals[index].current_member.toString() +
+                                          '/' +
+                                          jadwals[index]
+                                              .object_dolanan
+                                              .minimal_member
+                                              .toString() +
+                                          ' orang'),
+                                )),
                                 Container(
                                   margin: EdgeInsets.only(top: 15),
                                   child: Text(jadwals[index].lokasi), //lokasi
@@ -161,8 +178,7 @@ class _CariState extends State<Cari> {
                                   margin: EdgeInsets.only(top: 15, bottom: 15),
                                   alignment: Alignment.topRight,
                                   child: ElevatedButton.icon(
-                                    icon:
-                                        Icon(Icons.login),
+                                    icon: Icon(Icons.login),
                                     style: ButtonStyle(
                                       minimumSize:
                                           MaterialStateProperty.resolveWith(
@@ -176,8 +192,9 @@ class _CariState extends State<Cari> {
                                     ),
                                     label: Text('Join'),
                                     onPressed: () {
-                                      //todo: tolong pindahin fungsi join kesini 
-                                      join(pengguna_aktif?.id.toString(), jadwals[index].id.toString());
+                                      //todo: tolong pindahin fungsi join kesini
+                                      join(pengguna_aktif?.id.toString(),
+                                          jadwals[index].id.toString());
                                     },
                                   ),
                                 )
