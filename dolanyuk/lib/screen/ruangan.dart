@@ -5,6 +5,7 @@ import 'dart:convert';
 import 'package:dolanyuk/class/list_jadwals.dart';
 import 'package:dolanyuk/class/penggunas.dart';
 import 'package:dolanyuk/main.dart';
+import 'package:dolanyuk/screen/cari.dart';
 import 'package:dolanyuk/screen/ngobrol.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -71,15 +72,40 @@ class _RuanganState extends State<Ruangan> {
       Map json = jsonDecode(response.body);
 
       if (json['result'] == 'success') {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text('Berhasil masuk ke dalam Ruangan'),
-        ));
-
-        Navigator.pop(context);
-        Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-                builder: (context) => MyHomePage(), maintainState: false));
+        showDialog<String>(
+            context: context,
+            builder: (BuildContext context) => AlertDialog(
+                  title: Text(
+                    'Sukses Join',
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
+                  content: Text(
+                    'Selamat, kamu berhasil join pada jadwal dolanan. Kamu bisa ngobrol bareng teman-teman dolananmu. Temanmu menghargai komitmemu untuk hadir dan bermain bersama!',
+                    style: TextStyle(fontSize: 16),
+                  ),
+                  actions: <Widget>[
+                    TextButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                        Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => MyHomePage(),
+                                maintainState: false));
+                      },
+                      child: const Text('OK'),
+                      style: ButtonStyle(
+                        shape: MaterialStateProperty.resolveWith((states) =>
+                            RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(15))),
+                        backgroundColor: MaterialStateProperty.resolveWith(
+                            (states) => Colors.purple[200]),
+                        foregroundColor: MaterialStateProperty.resolveWith(
+                            (states) => Colors.black),
+                      ),
+                    ),
+                  ],
+                ));
       } else if (json['result'] == 'fail') {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           content: Text(json['message']),
@@ -193,7 +219,7 @@ class _RuanganState extends State<Ruangan> {
                     ),
                   );
                 } else {
-                  if (LJs[0].object_jadwal.current_member >
+                  if (LJs[0].object_jadwal.current_member <
                       LJs[0].object_jadwal.object_dolanan.minimal_member) {
                     join(pengguna_aktif?.id.toString(),
                         LJs[0].object_jadwal.id.toString());

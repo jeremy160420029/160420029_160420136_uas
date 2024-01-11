@@ -81,9 +81,11 @@ class _CariState extends State<Cari> {
                     TextButton(
                       onPressed: () {
                         Navigator.pop(context);
-                        setState(() {
-                          bacaData();
-                        });
+                        Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => MyHomePage(),
+                                maintainState: false));
                       },
                       child: const Text('OK'),
                       style: ButtonStyle(
@@ -193,7 +195,7 @@ class _CariState extends State<Cari> {
                                     label: Text('Join'),
                                     onPressed: () {
                                       //todo: tolong pindahin fungsi join kesini
-                                      if (jadwals[index].current_member >
+                                      if (jadwals[index].current_member <
                                           jadwals[index]
                                               .object_dolanan
                                               .minimal_member) {

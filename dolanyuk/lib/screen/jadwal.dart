@@ -2,6 +2,7 @@
 
 import 'dart:convert';
 import 'package:dolanyuk/class/jadwals.dart';
+import 'package:dolanyuk/main.dart';
 import 'package:dolanyuk/screen/ngobrol.dart';
 import 'package:dolanyuk/screen/ruangan.dart';
 import 'package:flutter/material.dart';
@@ -35,6 +36,60 @@ class _JadwalState extends State<Jadwal> {
     if (response.statusCode == 200) {
       print(response.body);
       return response.body;
+    } else {
+      throw Exception('Failed to read API');
+    }
+  }
+
+  void keluar(penggunaID, jadwalID) async {
+    final response = await http.post(
+      Uri.parse('https://ubaya.me/flutter/160420136/dolanyuk/left.php'),
+      body: {'pengguna': penggunaID, 'jadwal': jadwalID},
+    );
+
+    if (response.statusCode == 200) {
+      Map json = jsonDecode(response.body);
+
+      if (json['result'] == 'success') {
+        showDialog<String>(
+            context: context,
+            builder: (BuildContext context) => AlertDialog(
+                  title: Text(
+                    'Sukses Keluar Ruangan',
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
+                  content: Text(
+                    'Kamu berhasil membatalkan jadwal Ruangan milikmu!',
+                    style: TextStyle(fontSize: 16),
+                  ),
+                  actions: <Widget>[
+                    TextButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                        Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => MyHomePage(),
+                                maintainState: false));
+                      },
+                      child: const Text('OK'),
+                      style: ButtonStyle(
+                        shape: MaterialStateProperty.resolveWith((states) =>
+                            RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(15))),
+                        backgroundColor: MaterialStateProperty.resolveWith(
+                            (states) => Colors.purple[200]),
+                        foregroundColor: MaterialStateProperty.resolveWith(
+                            (states) => Colors.black),
+                      ),
+                    ),
+                  ],
+                ));
+      } else if (json['result'] == 'fail') {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text(json['message']),
+        ));
+      }
     } else {
       throw Exception('Failed to read API');
     }
@@ -92,18 +147,26 @@ class _JadwalState extends State<Jadwal> {
                                     child: Text(jadwals[index].jam)), //jam
                                 Container(
                                     child: ElevatedButton.icon(
-                                      onPressed: (){
-                                        Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) => Ruangan(
-                                              jadwalID: jadwals[index].id,),
+                                  onPressed: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => Ruangan(
+                                          jadwalID: jadwals[index].id,
                                         ),
-                                      );
-                                      }, 
-                                      icon: Icon(Icons.group), 
-                                      label: Text(jadwals[index].current_member.toString() +'/' +jadwals[index].object_dolanan.minimal_member.toString() +' orang'), 
-                                  )),
+                                      ),
+                                    );
+                                  },
+                                  icon: Icon(Icons.group),
+                                  label: Text(
+                                      jadwals[index].current_member.toString() +
+                                          '/' +
+                                          jadwals[index]
+                                              .object_dolanan
+                                              .minimal_member
+                                              .toString() +
+                                          ' orang'),
+                                )),
                                 Container(
                                   margin: EdgeInsets.only(top: 15),
                                   child: Text(jadwals[index].lokasi), //lokasi
@@ -111,6 +174,61 @@ class _JadwalState extends State<Jadwal> {
                                 Container(
                                     child:
                                         Text(jadwals[index].alamat)), //alamat
+                                Container(
+                                  margin: EdgeInsets.only(top: 15, bottom: 15),
+                                  alignment: Alignment.topRight,
+                                  child: ElevatedButton.icon(
+                                    icon: Icon(Icons.exit_to_app),
+                                    style: ButtonStyle(
+                                      minimumSize:
+                                          MaterialStateProperty.resolveWith(
+                                              (states) => Size(120, 40)),
+                                      backgroundColor:
+                                          MaterialStateProperty.resolveWith(
+                                              (states) => Colors.purple),
+                                      foregroundColor:
+                                          MaterialStateProperty.resolveWith(
+                                              (states) => Colors.white),
+                                    ),
+                                    label: Text('Keluar Ruangan'),
+                                    onPressed: () {
+                                      showDialog(
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return AlertDialog(
+                                            title: Text('Konfirmasi'),
+                                            content: Text(
+                                                'Apakah Anda yakin ingin keluar ruangan?'),
+                                            actions: <Widget>[
+                                              TextButton(
+                                                onPressed: () {
+                                                  Navigator.pop(
+                                                      context); // Close the dialog
+                                                },
+                                                child: Text('Batal'),
+                                              ),
+                                              TextButton(
+                                                onPressed: () {
+                                                  keluar(
+                                                    pengguna_aktif?.id
+                                                        .toString(),
+                                                    jadwals[index]
+                                                        .id
+                                                        .toString(),
+                                                  );
+                                                  Navigator.pop(
+                                                      context); // Close the dialog
+                                                },
+                                                child: Text('Keluar'),
+                                              ),
+                                            ],
+                                          );
+                                        },
+                                      );
+                                    },
+                                  ),
+                                ),
+
                                 Container(
                                   margin: EdgeInsets.only(top: 15, bottom: 15),
                                   alignment: Alignment.topRight,
@@ -134,7 +252,9 @@ class _JadwalState extends State<Jadwal> {
                                         context,
                                         MaterialPageRoute(
                                           builder: (context) => Ngobrol(
-                                              jadwalID: jadwals[index].id, penggunaID: pengguna_aktif!.id,),
+                                            jadwalID: jadwals[index].id,
+                                            penggunaID: pengguna_aktif!.id,
+                                          ),
                                         ),
                                       );
                                     },

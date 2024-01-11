@@ -3,6 +3,7 @@
 import 'dart:convert';
 import 'package:dolanyuk/class/ngobrols.dart';
 import 'package:dolanyuk/class/penggunas.dart';
+import 'package:dolanyuk/main.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
@@ -67,11 +68,105 @@ class _NgobrolState extends State<Ngobrol> {
     });
   }
 
+  void keluar(penggunaID, jadwalID) async {
+    final response = await http.post(
+      Uri.parse('https://ubaya.me/flutter/160420136/dolanyuk/left.php'),
+      body: {'pengguna': penggunaID, 'jadwal': jadwalID},
+    );
+
+    if (response.statusCode == 200) {
+      Map json = jsonDecode(response.body);
+
+      if (json['result'] == 'success') {
+        showDialog<String>(
+            context: context,
+            builder: (BuildContext context) => AlertDialog(
+                  title: Text(
+                    'Sukses Keluar Ruangan',
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
+                  content: Text(
+                    'Kamu berhasil membatalkan jadwal Ruangan milikmu!',
+                    style: TextStyle(fontSize: 16),
+                  ),
+                  actions: <Widget>[
+                    TextButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                        Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => MyHomePage(),
+                                maintainState: false));
+                      },
+                      child: const Text('OK'),
+                      style: ButtonStyle(
+                        shape: MaterialStateProperty.resolveWith((states) =>
+                            RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(15))),
+                        backgroundColor: MaterialStateProperty.resolveWith(
+                            (states) => Colors.purple[200]),
+                        foregroundColor: MaterialStateProperty.resolveWith(
+                            (states) => Colors.black),
+                      ),
+                    ),
+                  ],
+                ));
+      } else if (json['result'] == 'fail') {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text(json['message']),
+        ));
+      }
+    } else {
+      throw Exception('Failed to read API');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Party Chat'),
+        title: Row(
+          children: [
+            Text('Party Chat'),
+            Spacer(),
+            IconButton(
+              onPressed: () {
+                showDialog<String>(
+                  context: context,
+                  builder: (BuildContext context) => AlertDialog(
+                    title: Text('Konfirmasi'),
+                    content: Text('Apakah Anda yakin ingin keluar ruangan?'),
+                    actions: <Widget>[
+                      TextButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        child: const Text('Batal'),
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          keluar(
+                            pengguna_aktif?.id.toString(),
+                            obrolanList.isNotEmpty
+                                ? obrolanList[0]
+                                    .list_jadwals
+                                    .object_jadwal
+                                    .id
+                                    .toString()
+                                : "",
+                          );
+                        },
+                        child: const Text('Keluar'),
+                      ),
+                    ],
+                  ),
+                );
+              },
+              icon: Icon(Icons.exit_to_app),
+            ),
+          ],
+        ),
       ),
       body: Column(
         children: [
