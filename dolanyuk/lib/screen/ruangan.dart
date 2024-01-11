@@ -130,82 +130,124 @@ class _RuanganState extends State<Ruangan> {
         jadwal.object_pengguna.nama_lengkap == pengguna_aktif?.nama_lengkap);
 
     return Container(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.all(Radius.circular(5)),
-        color: Colors.purple[50],
-                ),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.all(Radius.circular(5)),
+          color: Colors.purple[50],
+        ),
         margin: EdgeInsets.all(30),
         padding: EdgeInsets.all(35),
         height: 500,
-        child:Column(
-        children: <Widget>[
-          Expanded(
-            child: ListView.builder(
-              itemCount: LJs.length,
-              itemBuilder: (BuildContext ctxt, int index) {
-                return Card(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: <Widget>[
-                      ListTile(
-                        leading: CircleAvatar(
-                          backgroundImage: NetworkImage(
-                              LJs[index].object_pengguna.gambar ?? 'https://chi-care.org/newdesign/wp-content/uploads/2023/05/Dummy-Person.png'),
-                          radius: 30,
+        child: Column(
+          children: <Widget>[
+            Expanded(
+              child: ListView.builder(
+                itemCount: LJs.length,
+                itemBuilder: (BuildContext ctxt, int index) {
+                  return Card(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                        ListTile(
+                          leading: CircleAvatar(
+                            backgroundImage: NetworkImage(LJs[index]
+                                    .object_pengguna
+                                    .gambar ??
+                                'https://chi-care.org/newdesign/wp-content/uploads/2023/05/Dummy-Person.png'),
+                            radius: 30,
+                          ),
+                          title: GestureDetector(
+                            child:
+                                Text(LJs[index].object_pengguna.nama_lengkap),
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => Ngobrol(
+                                      jadwalID: LJs[index].object_jadwal.id,
+                                      penggunaID: pengguna_aktif!.id),
+                                ),
+                              );
+                            },
+                          ),
+                          subtitle: Text(LJs[index].object_pengguna.email),
                         ),
-                        title: GestureDetector(
-                          child: Text(LJs[index].object_pengguna.nama_lengkap),
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => Ngobrol(
-                                    jadwalID: LJs[index].object_jadwal.id,
-                                    penggunaID: pengguna_aktif!.id),
-                              ),
-                            );
-                          },
-                        ),
-                        subtitle: Text(LJs[index].object_pengguna.email),
-                      ),
-                      SizedBox(height: 10),
-                    ],
-                  ),
-                );
-              },
+                        SizedBox(height: 10),
+                      ],
+                    ),
+                  );
+                },
+              ),
             ),
-          ),
-          SizedBox(height: 10),
-          
-          SizedBox(height: 10),
-          ElevatedButton(
-            onPressed: () {
-              if (isCurrentUserInList) {
-                // Jika pengguna aktif ada dalam daftar, navigasikan ke obrolan
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => Ngobrol(
-                        jadwalID: LJs[0].object_jadwal.id,
-                        penggunaID: pengguna_aktif!.id),
-                  ),
-                );
-              } else {
-                join(pengguna_aktif?.id.toString(),
-                    LJs[0].object_jadwal.id.toString());
-              }
-            },
-            child: Text(isCurrentUserInList ? 'Buka Obrolan' : 'Join'),
-          ),
-          SizedBox(height: 10),
-          ElevatedButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            child: Text('Kembali'),
-          ),
-        ],
-    ));
+            SizedBox(height: 10),
+            SizedBox(height: 10),
+            ElevatedButton(
+              onPressed: () {
+                if (isCurrentUserInList) {
+                  // Jika pengguna aktif ada dalam daftar, navigasikan ke obrolan
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => Ngobrol(
+                          jadwalID: LJs[0].object_jadwal.id,
+                          penggunaID: pengguna_aktif!.id),
+                    ),
+                  );
+                } else {
+                  if (LJs[0].object_jadwal.current_member >
+                      LJs[0].object_jadwal.object_dolanan.minimal_member) {
+                    join(pengguna_aktif?.id.toString(),
+                        LJs[0].object_jadwal.id.toString());
+                  } else {
+                    showDialog<String>(
+                        context: context,
+                        builder: (BuildContext context) => AlertDialog(
+                              title: Text(
+                                'Gagal Join',
+                                style: TextStyle(
+                                    fontSize: 16, fontWeight: FontWeight.bold),
+                              ),
+                              content: Text(
+                                'Jadwal sudah penuh, silahkan masuk ke dalam Ruangan lain!',
+                                style: TextStyle(fontSize: 16),
+                              ),
+                              actions: <Widget>[
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                    setState(() {
+                                      bacaData();
+                                    });
+                                  },
+                                  child: const Text('OK'),
+                                  style: ButtonStyle(
+                                    shape: MaterialStateProperty.resolveWith(
+                                        (states) => RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(15))),
+                                    backgroundColor:
+                                        MaterialStateProperty.resolveWith(
+                                            (states) => Colors.purple[200]),
+                                    foregroundColor:
+                                        MaterialStateProperty.resolveWith(
+                                            (states) => Colors.black),
+                                  ),
+                                ),
+                              ],
+                            ));
+                  }
+                }
+              },
+              child: Text(isCurrentUserInList ? 'Buka Obrolan' : 'Join'),
+            ),
+            SizedBox(height: 10),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: Text('Kembali'),
+            ),
+          ],
+        ));
   }
 
   @override

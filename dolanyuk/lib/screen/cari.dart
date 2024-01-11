@@ -193,8 +193,63 @@ class _CariState extends State<Cari> {
                                     label: Text('Join'),
                                     onPressed: () {
                                       //todo: tolong pindahin fungsi join kesini
-                                      join(pengguna_aktif?.id.toString(),
-                                          jadwals[index].id.toString());
+                                      if (jadwals[index].current_member >
+                                          jadwals[index]
+                                              .object_dolanan
+                                              .minimal_member) {
+                                        join(pengguna_aktif?.id.toString(),
+                                            jadwals[index].id.toString());
+                                      } else {
+                                        showDialog<String>(
+                                            context: context,
+                                            builder:
+                                                (BuildContext context) =>
+                                                    AlertDialog(
+                                                      title: Text(
+                                                        'Gagal Join',
+                                                        style: TextStyle(
+                                                            fontSize: 16,
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .bold),
+                                                      ),
+                                                      content: Text(
+                                                        'Jadwal sudah penuh, silahkan masuk ke dalam Ruangan lain!',
+                                                        style: TextStyle(
+                                                            fontSize: 16),
+                                                      ),
+                                                      actions: <Widget>[
+                                                        TextButton(
+                                                          onPressed: () {
+                                                            Navigator.pop(
+                                                                context);
+                                                            setState(() {
+                                                              bacaData();
+                                                            });
+                                                          },
+                                                          child:
+                                                              const Text('OK'),
+                                                          style: ButtonStyle(
+                                                            shape: MaterialStateProperty.resolveWith((states) =>
+                                                                RoundedRectangleBorder(
+                                                                    borderRadius:
+                                                                        BorderRadius.circular(
+                                                                            15))),
+                                                            backgroundColor:
+                                                                MaterialStateProperty
+                                                                    .resolveWith(
+                                                                        (states) =>
+                                                                            Colors.purple[200]),
+                                                            foregroundColor:
+                                                                MaterialStateProperty
+                                                                    .resolveWith(
+                                                                        (states) =>
+                                                                            Colors.black),
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ));
+                                      }
                                     },
                                   ),
                                 )
