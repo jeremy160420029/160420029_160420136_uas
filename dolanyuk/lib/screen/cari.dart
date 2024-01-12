@@ -266,8 +266,8 @@ class _CariState extends State<Cari> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text('Jadwal main masih kosong ni'),
-              Text('Cari konco main atau bikin jadwal baru aja')
+              Text('Cari Jadwal masih kosong'),
+              Text('Silahkan buat Jadwal baru sesuai dengan keinginan Anda!')
             ],
           ));
     }
